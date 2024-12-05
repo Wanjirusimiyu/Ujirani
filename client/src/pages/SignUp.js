@@ -34,7 +34,7 @@ const SignUp = () => {
           Create an account to stay connected with your community, share
           local news and
         </p>
-        <p className="text-base text-gray-400 mb-4">
+        <p className="text-base text-gray-400 mb-10">
           get involved in neighborhood activities.
         </p>
 
