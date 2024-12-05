@@ -92,7 +92,7 @@ const SignUp = () => {
             <button className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
               <FcGoogle className="w-5 h-5 mr-3" />
               <span className="text-gray-600 font-medium">
-                Sign up with Google
+                Continue with Google
               </span>
             </button>
           </form>
