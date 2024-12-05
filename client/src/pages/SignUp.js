@@ -31,11 +31,11 @@ const SignUp = () => {
           Join Ujirani - Connect with Your Neighbors!
         </h1>
         <p className="text-base text-gray-400 mb-1">
-          Create an account to stay connected with your community and share
-          local news with your neighbors.
+          Create an account to stay connected with your community, share
+          local news and
         </p>
         <p className="text-base text-gray-400 mb-4">
-          Get involved in neighborhood activities.
+          get involved in neighborhood activities.
         </p>
 
         {/*Form Section */}
