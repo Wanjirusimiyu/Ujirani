@@ -14,7 +14,7 @@ const SignUp = () => {
           alt="Ujirani Logo"
           className="h-auto w-auto -mt-24 mb-6"
         />
-        <p className=" text-sm font-semibold text-center -mt-32 mb-28 ">
+        <p className=" text-sm font-semibold text-center -mt-28 mb-28 ">
           Connect with your neighbors!
         </p>
         {/* footer Section */}
