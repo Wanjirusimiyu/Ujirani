@@ -40,14 +40,14 @@ const SignUp = () => {
 
         {/*Form Section */}
         <div className="w-full max-w-md px-8">
-          <form className="space-y-3">
+          <form className="space-y-5">
             <div className="relative">
               <label className="absolute -top-2 left-4 bg-white px-2 text-xs font-medium text-green-600">
                 Full Name
               </label>
               <input
                 type="text"
-                className="w-full p-3 pl-4 border-2 border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
+                className="w-full p-3 pl-4 border-2 border-gray-500 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
                 onFocus={() => setFocusedField("name")}
                 onBlur={() => setFocusedField(null)}
               />
@@ -59,7 +59,7 @@ const SignUp = () => {
               </label>
               <input
                 type="email"
-                className="w-full p-3 pl-4 border-2 border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
+                className="w-full p-3 pl-4 border-2 border-gray-500 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
                 onFocus={() => setFocusedField("email")}
                 onBlur={() => setFocusedField(null)}
               />
@@ -71,13 +71,13 @@ const SignUp = () => {
               </label>
               <input
                 type="password"
-                className="w-full p-3 pl-4 border-2 border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
+                className="w-full p-3 pl-4 border-2 border-gray-500 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
                 onFocus={() => setFocusedField("password")}
                 onBlur={() => setFocusedField(null)}
               />
             </div>
 
-            <button className="w-full bg-green-600 text-white py-2.5 rounded-lg font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2">
+            <button className="w-full bg-green-600 text-white py-2.5 rounded-2xl font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2">
               Sign Up
             </button>
 
@@ -89,7 +89,7 @@ const SignUp = () => {
               <div className="border-t border-gray-300 w-full"></div>
             </div>
 
-            <button className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+            <button className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-2xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
               <FcGoogle className="w-5 h-5 mr-3" />
               <span className="text-gray-600 font-medium">
                 Continue with Google
@@ -97,13 +97,13 @@ const SignUp = () => {
             </button>
           </form>
 
-          <p className="text-center text-gray-500 text-sm mt-3 mb-3">
+          <p className="text-center text-gray-500 text-sm mt-6 mb-6">
             Already have an account?{" "}
             <a
               href="#"
               className="text-green-600 hover:text-green-700 font-medium"
             >
-              Sign in
+              Login
             </a>
           </p>
         </div>
