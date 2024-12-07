@@ -48,6 +48,7 @@ const Login = () => {
                 className="w-full p-3 pl-4 border-2 border-gray-500 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
                 onFocus={() => setFocusedField("name")}
                 onBlur={() => setFocusedField(null)}
+                placeholder='Enter your email'
               />
             </div>
 
@@ -61,6 +62,7 @@ const Login = () => {
                 className="w-full p-3 pl-4 border-2 border-gray-500 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
                 onFocus={() => setFocusedField("password")}
                 onBlur={() => setFocusedField(null)}
+                placeholder='Enter your password'
               />
             </div>
 
