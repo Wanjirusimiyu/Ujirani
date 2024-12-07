@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ujirani from "../assets/ujirani.png";
 import { FcGoogle } from "react-icons/fc";
+import { Link } from "react-router-dom";
 
 const SignUp = () => {
   const [focusedField, setFocusedField] = useState(null);
@@ -102,12 +103,12 @@ const SignUp = () => {
 
           <p className="text-center text-gray-500 text-sm mt-6 mb-6">
             Already have an account?{" "}
-            <a
-              href="#"
+            <Link
+              to="/login"
               className="text-green-600 hover:text-green-700 font-medium"
             >
               Login
-            </a>
+            </Link>
           </p>
         </div>
       </div>
