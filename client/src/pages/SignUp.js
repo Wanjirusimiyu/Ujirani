@@ -81,7 +81,7 @@ const SignUp = () => {
             </div>
 
             <button className="w-full bg-green-600 text-white py-2.5 rounded-2xl font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2">
-              Sign Up
+              SIGN UP
             </button>
 
             <div className="relative flex items-center justify-center my-3">
