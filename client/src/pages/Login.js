@@ -32,7 +32,7 @@ const Login = () => {
           Welcome Back to Ujirani
         </h1>
         <p className="text-base text-gray-400 mb-1">
-          Log in to stay updated with your neighbourhood
+          Log in to stay updated with your neighbourhood.
         </p>
         
 
@@ -67,7 +67,7 @@ const Login = () => {
             </div>
 
             <button className="w-full bg-green-600 text-white py-2.5 rounded-2xl font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2">
-              Login
+              LOGIN
             </button>
 
             <div className="relative flex items-center justify-center my-3">
