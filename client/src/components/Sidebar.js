@@ -11,27 +11,27 @@ import ujirani from "../assets/ujirani.png";
 const Sidebar = () => {
   const links = [
     { name: "Home", path: "/", icon: <AiFillHome /> },
-    { name: "Explore", path: "/explore", icon: < MdExplore/> },
+    { name: "Explore", path: "/explore", icon: <MdExplore /> },
     { name: "Sales", path: "/sales", icon: <FaChartBar /> },
-    { name: "Chats", path: "/chats", icon: <PiChatCircleTextFill  /> },
-    { name: "Jirani", path: "/jirani", icon: <FaUserPlus/> },
+    { name: "Chats", path: "/chats", icon: <PiChatCircleTextFill /> },
+    { name: "Jirani", path: "/jirani", icon: <FaUserPlus /> },
     { name: "Settings", path: "/settings", icon: <IoMdSettings /> },
   ];
 
   return (
-    <div className="bg-black w-1/4 font-poppins">
+    <div className="bg-black w-1/4 font-poppins px-8">
       <img src={ujirani} alt="Ujirani logo" className="h-60 w-60 -mt-16 mb-4" />
-      <aside className="bg-black  text-gray-400 h-screen flex flex-col">
+      <aside className="bg-black text-gray-400 h-screen flex flex-col">
         <nav>
-          <ul className="space-y-2">
+          <ul className="space-y-4">
             {links.map((link) => (
-              <li key={link.name} className="p-2 flex font-semibold items-center">
+              <li key={link.name} className="flex font-semibold items-center">
                 <NavLink
                   to={link.path}
                   className={({ isActive }) =>
                     isActive
-                      ? "font-bold text-green-500 flex items-center space-x-2"
-                      : "flex items-center space-x-2"
+                      ? "font-bold text-green-500 flex items-center gap-3"
+                      : "flex items-center gap-3"
                   }
                 >
                   <span className="text-xl">{link.icon}</span>
