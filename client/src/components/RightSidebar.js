@@ -53,7 +53,7 @@ const RightSidebar = () => {
           <img
             src={reminder}
             alt="reminder.png"
-            className="w-52 h-52"
+            className="w-52 h-52 object-contain mx-auto"
           />
         </div>
       </div>
