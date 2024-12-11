@@ -19,13 +19,22 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="bg-black w-1/4 font-poppins px-8">
-      <img src={ujirani} alt="Ujirani logo" className="h-60 w-60 -mt-16 mb-4" />
-      <aside className="bg-black text-gray-400 h-screen flex flex-col">
+    <div className="bg-black w-1/4 font-poppins flex flex-col items-center justify-between px-6 py-8 min-h-screen">
+      <img
+        src={ujirani}
+        alt="Ujirani logo"
+        className="h-48 w-48 mb-2 -mt-10 object-contain -ml-32"
+      />
+
+      {/* Navigation Links */}
+      <aside className="bg-black text-gray-400 flex-1 w-full -mr-10">
         <nav>
-          <ul className="space-y-4">
+          <ul className="space-y-6">
             {links.map((link) => (
-              <li key={link.name} className="flex font-semibold items-center">
+              <li
+                key={link.name}
+                className="flex font-semibold text-lg items-center mb-2"
+              >
                 <NavLink
                   to={link.path}
                   className={({ isActive }) =>
@@ -40,13 +49,15 @@ const Sidebar = () => {
               </li>
             ))}
           </ul>
-          <footer className="mt-16 text-sm text-gray-500 text-center -mb-24 justify-center items-center">
-            <p className="mb-6">Help · Guidelines · Legal Policy</p>
-            <p className="mb-6">About · Press · Blog</p>
-            <p className="text-white">© 2024 ITR Business Solutions</p>
-          </footer>
         </nav>
       </aside>
+
+      {/* Footer Section */}
+      <footer className="text-sm text-gray-500 text-center">
+        <p className="mb-4">Help · Guidelines · Legal Policy</p>
+        <p className="mb-4">About · Press · Blog</p>
+        <p className="text-white">© 2024 ITR Business Solutions</p>
+      </footer>
     </div>
   );
 };
