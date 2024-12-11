@@ -9,7 +9,7 @@ const RightSidebar = () => {
   return (
     <div className="w-full bg-gray-100 p-4 min-h-screen">
       {/* Profile Section */}
-      <div className="bg-white rounded-lg mb-3 shadow-sm cursor-pointer">
+      <div className=" bg-gray-100 rounded-lg mb-3 shadow-sm cursor-pointer">
         <div className="flex items-center space-x-2">
           <div className="w-20 h-20 rounded-s-md bg-gray-300"></div>
           <div>
@@ -20,7 +20,7 @@ const RightSidebar = () => {
       </div>
 
       {/* Advertisement Card */}
-      <div className="bg-white rounded-lg p-4 mb-3 -mt-1 shadow-sm">
+      <div className=" bg-gray-200 rounded-lg p-4 mb-3 -mt-1 shadow-sm">
         <div className="flex flex-col mb-3">
           <div className="flex space-x-20 mb-4">
             <img
@@ -48,14 +48,12 @@ const RightSidebar = () => {
       </div>
 
       {/* Reminder Card */}
-      <div className="bg-white rounded-lg p-4 shadow-sm">
-        <div className="text-sm text-gray-600">
+      <div className=" bg-gray-100 rounded-lg p-4 shadow-sm">
           <img
             src={reminder}
             alt="reminder.png"
             className="w-52 h-52 object-contain mx-auto"
           />
-        </div>
       </div>
     </div>
   );
