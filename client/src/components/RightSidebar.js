@@ -20,7 +20,10 @@ const RightSidebar = () => {
       </div>
 
       {/* Advertisement Card */}
-      <div className=" bg-gray-200 rounded-lg p-4 mb-3 -mt-1 shadow-sm">
+      <div className=" bg-gray-200 rounded-lg p-4 mb-3 shadow-sm">
+      <h1 className="font-semibold text-sm text-black text-left mb-4 pt-0">
+            Advertisements
+          </h1>
         <div className="flex flex-col mb-3">
           <div className="flex space-x-20 mb-4">
             <img
