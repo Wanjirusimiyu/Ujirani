@@ -2,6 +2,8 @@ import React from "react";
 import PostCard from "../components/PostCard";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import RightSidebar from "../components/RightSidebar";
+
 const Home = () => {
   const posts = [
     {
@@ -33,24 +35,30 @@ const Home = () => {
   ];
 
   return (
-    // Main container
     <div className="relative font-poppins h-screen overflow-hidden bg-black flex">
       {/* Left Sidebar */}
       <Sidebar />
-      {/* Right Content Section */}
-      <div className="w-full bg-white flex flex-col rounded-3xl overflow-hidden">
-        <Navbar />
-        <div className="w-full max-w-4xl px-8 mt-10 overflow-y-auto h-[calc(100vh-120px)]">
-          {/* Page Content */}
-          <div className="p-6 bg-gray-100 flex-1">
-            {posts.map((post, index) => (
-              <PostCard key={index} {...post} />
-            ))}
+      
+      {/* Main Content Area */}
+      <div className="flex-1 bg-white rounded-3xl overflow-hidden flex">
+        {/* Posts Section */}
+        <div className="flex-1 flex flex-col">
+          <Navbar />
+          <div className="flex-1 overflow-y-auto px-8 mt-10">
+            <div className="p-6 bg-gray-100">
+              {posts.map((post, index) => (
+                <PostCard key={index} {...post} />
+              ))}
+            </div>
           </div>
+        </div>
+        
+        {/* Right Sidebar */}
+        <div className="w-1/3 bg-gray-100 p-4 min-h-screen">
+          <RightSidebar />
         </div>
       </div>
     </div>
   );
 };
-
 export default Home;
