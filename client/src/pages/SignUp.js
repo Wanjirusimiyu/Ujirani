@@ -4,9 +4,51 @@ import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 
 const SignUp = () => {
-  const [focusedField, setFocusedField] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  const validateName = (value) =>
+    value.length < 6 ? "Please enter your full name." : "";
+
+  const validateEmail = (value) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return !emailPattern.test(value) ? "Please enter a valid email address." : "";
+  };
+
+  const validatePassword = (value) =>
+    value.length < 6 ? "Password must be at least 6 characters." : "";
+
+  const handleBlur = (field) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+
+    if (field === "name") {
+      setErrors((prev) => ({ ...prev, name: validateName(name) }));
+    } else if (field === "email") {
+      setErrors((prev) => ({ ...prev, email: validateEmail(email) }));
+    } else if (field === "password") {
+      setErrors((prev) => ({ ...prev, password: validatePassword(password) }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const nameError = validateName(name);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+
+    setErrors({ name: nameError, email: emailError, password: passwordError });
+    setTouched({ name: true, email: true, password: true });
+
+    if (!nameError && !emailError && !passwordError) {
+      console.log("Form submitted successfully:", { name, email, password });
+    }
+  };
+
   return (
-    // Main Container
     <div className="relative font-poppins min-h-screen max-h-screen bg-black flex">
       {/* Left logo Section */}
       <div className="w-1/3 text-white flex flex-col justify-center items-center p-10">
@@ -18,7 +60,6 @@ const SignUp = () => {
         <p className=" text-sm font-semibold text-center -mt-28 mb-28 ">
           Connect with your neighbors!
         </p>
-        {/* footer Section */}
         <footer className="mt-10 text-sm text-gray-500 text-center -mb-24 justify-center items-center ">
           <p className="mb-6">Help · Guidelines · Legal Policy</p>
           <p className="mb-6">About · Press · Blog</p>
@@ -41,18 +82,25 @@ const SignUp = () => {
 
         {/*Form Section */}
         <div className="w-full max-w-md px-8">
-          <form className="space-y-5">
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="relative">
               <label className="absolute -top-2 left-4 bg-white px-2 text-xs font-medium text-green-600">
                 Full Name
               </label>
               <input
                 type="text"
-                className="w-full p-3 pl-4 border-2 border-gray-500 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
-                onFocus={() => setFocusedField("name")}
-                onBlur={() => setFocusedField(null)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onBlur={() => handleBlur("name")}
+                className={`w-full p-3 pl-4 border-2 rounded-lg bg-gray-50 focus:outline-none transition-all duration-200 ${
+                  touched.name && errors.name ? "border-red-500" : "border-gray-500"
+                }`}
                 placeholder="Enter your full name"
+                required
               />
+              {touched.name && errors.name && (
+                <p className="text-red-600 text-sm mt-1">{errors.name}</p>
+              )}
             </div>
 
             <div className="relative">
@@ -61,11 +109,18 @@ const SignUp = () => {
               </label>
               <input
                 type="email"
-                className="w-full p-3 pl-4 border-2 border-gray-500 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
-                onFocus={() => setFocusedField("email")}
-                onBlur={() => setFocusedField(null)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => handleBlur("email")}
+                className={`w-full p-3 pl-4 border-2 rounded-lg bg-gray-50 focus:outline-none transition-all duration-200 ${
+                  touched.email && errors.email ? "border-red-500" : "border-gray-500"
+                }`}
                 placeholder="Enter your email"
+                required
               />
+              {touched.email && errors.email && (
+                <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+              )}
             </div>
 
             <div className="relative">
@@ -74,11 +129,18 @@ const SignUp = () => {
               </label>
               <input
                 type="password"
-                className="w-full p-3 pl-4 border-2 border-gray-500 rounded-lg bg-gray-50 focus:bg-white focus:outline-none focus:border-green-500 transition-all duration-200"
-                onFocus={() => setFocusedField("password")}
-                onBlur={() => setFocusedField(null)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onBlur={() => handleBlur("password")}
+                className={`w-full p-3 pl-4 border-2 rounded-lg bg-gray-50 focus:outline-none transition-all duration-200 ${
+                  touched.password && errors.password ? "border-red-500" : "border-gray-500"
+                }`}
                 placeholder="Create a strong password"
+                required
               />
+              {touched.password && errors.password && (
+                <p className="text-red-600 text-sm mt-1">{errors.password}</p>
+              )}
             </div>
 
             <button className="w-full bg-green-600 text-white py-2.5 rounded-2xl font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2">
@@ -87,22 +149,18 @@ const SignUp = () => {
 
             <div className="relative flex items-center justify-center my-3">
               <div className="border-t border-gray-300 w-full"></div>
-              <span className="bg-white px-3 text-sm text-gray-500">
-                or 
-              </span>
+              <span className="bg-white px-3 text-sm text-gray-500">or</span>
               <div className="border-t border-gray-300 w-full"></div>
             </div>
 
             <button className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-2xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
               <FcGoogle className="w-5 h-5 mr-3" />
-              <span className="text-gray-600 font-medium">
-                Continue with Google
-              </span>
+              <span className="text-gray-600 font-medium">Continue with Google</span>
             </button>
           </form>
 
           <p className="text-center text-gray-500 text-sm mt-6 mb-6">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <Link
               to="/login"
               className="text-green-600 hover:text-green-700 font-medium"
