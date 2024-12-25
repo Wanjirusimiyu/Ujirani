@@ -1,6 +1,16 @@
-from sqlalchemy_serializer import SerializerMixin
-from sqlalchemy.ext.associationproxy import association_proxy
+from flask_sqlalchemy import SQLAlchemy
 
-from config import db
+db = SQLAlchemy()
 
-# Models go here!
+class User(db.Model):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    fullname = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, fullname, email, password):
+        self.fullname = fullname
+        self.email = email
+        self.password = password
