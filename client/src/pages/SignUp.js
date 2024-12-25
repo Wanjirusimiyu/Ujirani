@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ujirani from "../assets/ujirani.png";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -9,6 +10,8 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const validateName = (value) =>
     value.length < 6 ? "Please enter your full name." : "";
@@ -44,30 +47,58 @@ const SignUp = () => {
     setTouched({ name: true, email: true, password: true });
 
     if (!nameError && !emailError && !passwordError) {
-      console.log("Form submitted successfully:", { name, email, password });
+      const userData = {
+        fullname: name,
+        email: email,
+        password: password,
+      };
+
+      axios
+        .post("http://127.0.0.1:5555/signup", userData)
+        .then((response) => {
+          setSuccessMessage("Account created successfully! You can now login.");
+          setErrorMessage("");
+          setName("");
+          setEmail("");
+          setPassword("");
+          setTouched({});
+          setErrors({});
+          
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 2000);
+        })
+        .catch((error) => {
+          if (error.response) {
+            setErrorMessage(error.response.data.message || "An error occurred during signup");
+          } else if (error.request) {
+            setErrorMessage("No response from server. Please try again.");
+          } else {
+            setErrorMessage("Error: " + error.message);
+          }
+          setSuccessMessage("");
+        });
     }
   };
 
   return (
     <div className="relative font-poppins min-h-screen max-h-screen bg-black flex">
-      {/* Left logo Section */}
       <div className="w-1/3 text-white flex flex-col justify-center items-center p-10">
         <img
           src={ujirani}
           alt="Ujirani Logo"
           className="h-auto w-auto -mt-24 mb-6"
         />
-        <p className=" text-sm font-semibold text-center -mt-28 mb-28 ">
+        <p className="text-sm font-semibold text-center -mt-28 mb-28">
           Connect with your neighbors!
         </p>
-        <footer className="mt-10 text-sm text-gray-500 text-center -mb-24 justify-center items-center ">
+        <footer className="mt-10 text-sm text-gray-500 text-center -mb-24 justify-center items-center">
           <p className="mb-6">Help · Guidelines · Legal Policy</p>
           <p className="mb-6">About · Press · Blog</p>
           <p className="text-white">© 2024 ITR Business Solutions</p>
         </footer>
       </div>
 
-      {/* Right Section */}
       <div className="w-full bg-white flex flex-col justify-center items-center rounded-lg">
         <h1 className="text-2xl font-bold mb-3 text-green-600">
           Join Ujirani - Connect with Your Neighbors!
@@ -80,9 +111,20 @@ const SignUp = () => {
           get involved in neighborhood activities.
         </p>
 
-        {/*Form Section */}
         <div className="w-full max-w-md px-8">
           <form className="space-y-5" onSubmit={handleSubmit}>
+            {successMessage && (
+              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+                {successMessage}
+              </div>
+            )}
+
+            {errorMessage && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                {errorMessage}
+              </div>
+            )}
+
             <div className="relative">
               <label className="absolute -top-2 left-4 bg-white px-2 text-xs font-medium text-green-600">
                 Full Name
