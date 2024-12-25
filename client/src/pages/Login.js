@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import ujirani from "../assets/ujirani.png";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const validateEmail = (value) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -19,7 +21,6 @@ const Login = () => {
 
   const handleBlur = (field) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
-
     if (field === "email") {
       setErrors((prev) => ({ ...prev, email: validateEmail(email) }));
     } else if (field === "password") {
@@ -27,7 +28,7 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const emailError = validateEmail(email);
@@ -37,13 +38,38 @@ const Login = () => {
     setTouched({ email: true, password: true });
 
     if (!emailError && !passwordError) {
-      console.log("Login successful:", { email, password });
+      try {
+        const response = await fetch('http://127.0.0.1:5555/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'include',
+          mode: 'cors',
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+        console.log('Response:', data);
+
+        if (response.ok) {
+          setMessage("Login successful!");
+          setTimeout(() => {
+            navigate('/', { state: { user: data.user } });
+          }, 1500);
+        } else {
+          setMessage(data.message || "Invalid email or password");
+        }
+      } catch (error) {
+        console.log('Error details:', error);
+        setMessage("Invalid credentials. Please check your email and password.");
+      }
     }
   };
 
   return (
     <div className="relative font-poppins min-h-screen max-h-screen bg-black flex">
-      {/* Left logo Section */}
       <div className="w-1/3 text-white flex flex-col justify-center items-center p-10">
         <img
           src={ujirani}
@@ -60,7 +86,6 @@ const Login = () => {
         </footer>
       </div>
 
-      {/* Right Login Section */}
       <div className="w-full bg-white flex flex-col justify-center items-center rounded-lg">
         <h1 className="text-2xl font-bold mb-3 text-green-600">
           Welcome Back to Ujirani
@@ -69,9 +94,16 @@ const Login = () => {
           Log in to stay updated with your neighbourhood.
         </p>
 
-        {/* Form Section */}
         <div className="w-full max-w-md px-8 mt-10">
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+            {message && (
+              <div className={`p-3 rounded-lg text-center ${
+                message.includes("successful") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+              }`}>
+                {message}
+              </div>
+            )}
+
             <div className="relative">
               <label className="absolute -top-2 left-4 bg-white px-2 text-xs font-medium text-green-600">
                 Email
@@ -114,7 +146,10 @@ const Login = () => {
               )}
             </div>
 
-            <button className="w-full bg-green-600 text-white py-2.5 rounded-2xl font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2">
+            <button 
+              type="submit"
+              className="w-full bg-green-600 text-white py-2.5 rounded-2xl font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2"
+            >
               LOGIN
             </button>
 
@@ -124,7 +159,10 @@ const Login = () => {
               <div className="border-t border-gray-300 w-full"></div>
             </div>
 
-            <button className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-2xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+            <button 
+              type="button"
+              className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-2xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+            >
               <FcGoogle className="w-5 h-5 mr-3" />
               <span className="text-gray-600 font-medium">
                 Continue with Google
