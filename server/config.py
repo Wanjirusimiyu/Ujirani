@@ -40,12 +40,30 @@
 # CORS(app)
 
 # config.py
-
+from datetime import timedelta
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 # Get the absolute path to the current file (i.e., the config.py file itself)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Specify the database file inside the instance folder
-SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(basedir, 'instance', 'database.db')}"
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+from datetime import timedelta
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+class Config:
+    JWT_SECRET_KEY = os.getenv('SECRET_KEY')
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+    JWT_TOKEN_LOCATION = ["cookies"]
+    JWT_COOKIE_SECURE = False # Set to True when in production /deployment
+    JWT_COOKIE_CSRF_PROTECT = True
+    # Specify the database file inside the instance folder
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(basedir, 'instance', 'database.db')}"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+
