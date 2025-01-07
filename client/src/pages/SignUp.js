@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import ujirani from "../assets/ujirani.png";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useGoogleLogin } from '@react-oauth/google';
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -12,13 +13,16 @@ const SignUp = () => {
   const [touched, setTouched] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const validateName = (value) =>
     value.length < 6 ? "Please enter your full name." : "";
 
   const validateEmail = (value) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return !emailPattern.test(value) ? "Please enter a valid email address." : "";
+    return !emailPattern.test(value)
+      ? "Please enter a valid email address."
+      : "";
   };
 
   const validatePassword = (value) =>
@@ -63,14 +67,16 @@ const SignUp = () => {
           setPassword("");
           setTouched({});
           setErrors({});
-          
+
           setTimeout(() => {
-            window.location.href = '/login';
+            window.location.href = "/login";
           }, 2000);
         })
         .catch((error) => {
           if (error.response) {
-            setErrorMessage(error.response.data.message || "An error occurred during signup");
+            setErrorMessage(
+              error.response.data.message || "An error occurred during signup"
+            );
           } else if (error.request) {
             setErrorMessage("No response from server. Please try again.");
           } else {
@@ -80,6 +86,37 @@ const SignUp = () => {
         });
     }
   };
+
+  const handleGoogleSuccess = async (tokenResponse) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5555/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ credential: tokenResponse.access_token })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setSuccessMessage("Account created successfully! Redirecting...");
+        setTimeout(() => {
+          navigate('/', { state: { user: data.user } });
+        }, 1500);
+      } else {
+        setErrorMessage(data.message || "Failed to create account with Google");
+      }
+    } catch (error) {
+      setErrorMessage("Failed to connect with Google. Please try again.");
+      console.error('Google auth error:', error);
+    }
+  };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: handleGoogleSuccess,
+    onError: () => setErrorMessage("Google sign up failed. Please try again."),
+  });
 
   return (
     <div className="relative font-poppins min-h-screen max-h-screen bg-black flex">
@@ -104,27 +141,26 @@ const SignUp = () => {
           Join Ujirani - Connect with Your Neighbors!
         </h1>
         <p className="text-base text-gray-400 mb-1">
-          Create an account to stay connected with your community, share
-          local news and
+          Create an account to stay connected with your community, share local news and
         </p>
         <p className="text-base text-gray-400 mb-10">
           get involved in neighborhood activities.
         </p>
 
         <div className="w-full max-w-md px-8">
+          {successMessage && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+              {successMessage}
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+              {errorMessage}
+            </div>
+          )}
+
           <form className="space-y-5" onSubmit={handleSubmit}>
-            {successMessage && (
-              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
-                {successMessage}
-              </div>
-            )}
-
-            {errorMessage && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                {errorMessage}
-              </div>
-            )}
-
             <div className="relative">
               <label className="absolute -top-2 left-4 bg-white px-2 text-xs font-medium text-green-600">
                 Full Name
@@ -135,7 +171,9 @@ const SignUp = () => {
                 onChange={(e) => setName(e.target.value)}
                 onBlur={() => handleBlur("name")}
                 className={`w-full p-3 pl-4 border-2 rounded-lg bg-gray-50 focus:outline-none transition-all duration-200 ${
-                  touched.name && errors.name ? "border-red-500" : "border-gray-500"
+                  touched.name && errors.name
+                    ? "border-red-500"
+                    : "border-gray-500"
                 }`}
                 placeholder="Enter your full name"
                 required
@@ -155,7 +193,9 @@ const SignUp = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={() => handleBlur("email")}
                 className={`w-full p-3 pl-4 border-2 rounded-lg bg-gray-50 focus:outline-none transition-all duration-200 ${
-                  touched.email && errors.email ? "border-red-500" : "border-gray-500"
+                  touched.email && errors.email
+                    ? "border-red-500"
+                    : "border-gray-500"
                 }`}
                 placeholder="Enter your email"
                 required
@@ -175,7 +215,9 @@ const SignUp = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={() => handleBlur("password")}
                 className={`w-full p-3 pl-4 border-2 rounded-lg bg-gray-50 focus:outline-none transition-all duration-200 ${
-                  touched.password && errors.password ? "border-red-500" : "border-gray-500"
+                  touched.password && errors.password
+                    ? "border-red-500"
+                    : "border-gray-500"
                 }`}
                 placeholder="Create a strong password"
                 required
@@ -185,7 +227,10 @@ const SignUp = () => {
               )}
             </div>
 
-            <button className="w-full bg-green-600 text-white py-2.5 rounded-2xl font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2">
+            <button
+              type="submit"
+              className="w-full bg-green-600 text-white py-2.5 rounded-2xl font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2"
+            >
               SIGN UP
             </button>
 
@@ -195,14 +240,20 @@ const SignUp = () => {
               <div className="border-t border-gray-300 w-full"></div>
             </div>
 
-            <button className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-2xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+            <button
+              type="button"
+              onClick={() => googleLogin()}
+              className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-2xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+            >
               <FcGoogle className="w-5 h-5 mr-3" />
-              <span className="text-gray-600 font-medium">Continue with Google</span>
+              <span className="text-gray-600 font-medium">
+                Continue with Google
+              </span>
             </button>
           </form>
 
           <p className="text-center text-gray-500 text-sm mt-6 mb-6">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link
               to="/login"
               className="text-green-600 hover:text-green-700 font-medium"
