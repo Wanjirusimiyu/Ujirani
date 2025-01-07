@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ujirani from "../assets/ujirani.png";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
+import { useGoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -51,7 +52,6 @@ const Login = () => {
         });
 
         const data = await response.json();
-        console.log('Response:', data);
 
         if (response.ok) {
           setMessage("Login successful!");
@@ -67,6 +67,34 @@ const Login = () => {
       }
     }
   };
+
+  const handleGoogleSuccess = async (tokenResponse) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5555/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ credential: tokenResponse.access_token })
+      });
+      
+      const data = await response.json();
+      if (response.ok) {
+        setMessage("Login successful!");
+        setTimeout(() => {
+          navigate('/', { state: { user: data.user } });
+        }, 1500);
+      }
+    } catch (error) {
+      setMessage("Google login failed. Please try again.");
+      console.error('Google auth error:', error);
+    }
+  };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: handleGoogleSuccess,
+    onError: () => setMessage("Google login failed. Please try again."),
+  });
 
   return (
     <div className="relative font-poppins min-h-screen max-h-screen bg-black flex">
@@ -146,7 +174,7 @@ const Login = () => {
               )}
             </div>
 
-            <button 
+            <button
               type="submit"
               className="w-full bg-green-600 text-white py-2.5 rounded-2xl font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2"
             >
@@ -159,8 +187,9 @@ const Login = () => {
               <div className="border-t border-gray-300 w-full"></div>
             </div>
 
-            <button 
+            <button
               type="button"
+              onClick={() => googleLogin()}
               className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-2xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
             >
               <FcGoogle className="w-5 h-5 mr-3" />
