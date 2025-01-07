@@ -4,6 +4,11 @@ from flask_jwt_extended import (
     set_access_cookies, set_refresh_cookies, jwt_required,
     get_jwt_identity, get_jwt, unset_jwt_cookies
 )
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+import requests 
+import secrets
+import string
 from werkzeug.security import check_password_hash
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -32,6 +37,11 @@ db.init_app(app)
 # Initialize other extensions
 bcrypt = Bcrypt(app)
 migrate = Migrate(app, db)
+
+
+def generate_secure_password():
+    alphabet = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(secrets.choice(alphabet) for _ in range(20))
 
 # Define routes
 @app.route('/')
@@ -181,7 +191,47 @@ def logout():
     unset_jwt_cookies(response)
     return response
 
-
+# Route to handle the google authentication
+@app.route('/auth/google', methods=['POST'])
+def google_auth():
+    try:
+        data = request.get_json()
+        token = data.get('credential')
+        
+        google_response = requests.get(
+            'https://www.googleapis.com/oauth2/v3/userinfo',
+            headers={'Authorization': f'Bearer {token}'}
+        )
+        google_data = google_response.json()
+        
+        email = google_data.get('email')
+        fullname = google_data.get('name')
+        
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            secure_password = generate_secure_password()
+            user = User(
+                fullname=fullname,
+                email=email,
+                password=secure_password,
+                is_verified=True  # Auto-verify Google users
+            )
+            db.session.add(user)
+            db.session.commit()
+        
+        return jsonify({
+            'token': create_access_token(identity=user.id),
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'fullname': user.fullname,
+                'is_verified': user.is_verified
+            }
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
 # Run the application
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
