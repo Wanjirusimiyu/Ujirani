@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/Sidebar';
-import { FaImage, FaShare } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import Sidebar from "../components/Sidebar";
+import { FaImage, FaShare } from "react-icons/fa";
 
 const PostCard = () => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-  const [preview, setPreview] = useState('');
+  const [preview, setPreview] = useState("");
 
   useEffect(() => {
     if (selectedFile) {
@@ -17,13 +17,13 @@ const PostCard = () => {
     } else if (imageUrl) {
       setPreview(imageUrl);
     } else {
-      setPreview('');
+      setPreview("");
     }
   }, [selectedFile, imageUrl]);
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
-    setImageUrl('');
+    setImageUrl("");
   };
 
   const handleUrlChange = (e) => {
@@ -33,31 +33,31 @@ const PostCard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    
+    formData.append("title", title);
+    formData.append("content", content);
+
     if (selectedFile) {
-      formData.append('image', selectedFile);
+      formData.append("image", selectedFile);
     } else if (imageUrl) {
-      formData.append('imageUrl', imageUrl);
+      formData.append("imageUrl", imageUrl);
     }
 
     try {
-      const response = await fetch('/api/posts', {
-        method: 'POST',
+      const response = await fetch("/api/posts", {
+        method: "POST",
         body: formData,
       });
       if (response.ok) {
-        setTitle('');
-        setContent('');
-        setImageUrl('');
+        setTitle("");
+        setContent("");
+        setImageUrl("");
         setSelectedFile(null);
-        setPreview('');
+        setPreview("");
       }
     } catch (error) {
-      console.error('Error creating post:', error);
+      console.error("Error creating post:", error);
     }
   };
 
@@ -67,40 +67,51 @@ const PostCard = () => {
       <div className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-2xl p-10 backdrop-blur-sm bg-opacity-95">
-            <h1 className="text-4xl font-bold mb-8 text-gray-800 tracking-tight flex items-center gap-3">
-              Create Your Story
-              <span className="text-green-500">✨</span>
-            </h1>
-            
+            <div className="flex flex-col items-center">
+              <h1 className="text-4xl font-poppins font-bold mb-2 text-green-700 tracking-tight flex items-center gap-3">
+                Create Your Story
+                <span className="text-green-500">✨</span>
+              </h1>
+              <h6 className="text-sm font-poppins text-black test-semibold mb-8">
+                Share your thoughts with the community!
+              </h6>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="transform transition-all duration-200 hover:scale-[1.01]">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Title</label>
+                <label className="block text-sm font-poppins font-semibold text-gray-700 mb-2">
+                  Title
+                </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="mt-1 block w-full rounded-xl border-gray-200 shadow-sm focus:border-green-400 focus:ring-green-400 p-4 text-lg transition-all duration-200"
+                  className="mt-1 block font-poppins w-full rounded-xl border-gray-500 bg-gray-200 shadow-lg focus:border-green-400 focus:ring-green-400 p-4 text-lg transition-all duration-200"
                   placeholder="Give your post a catchy title"
                   required
                 />
               </div>
-              
+
               <div className="transform transition-all duration-200 hover:scale-[1.01]">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Content</label>
+                <label className="block text-sm font-poppins font-semibold text-gray-700 mb-2">
+                  Content
+                </label>
                 <textarea
                   rows={6}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="mt-1 block w-full rounded-xl border-gray-200 shadow-sm focus:border-green-400 focus:ring-green-400 p-4 text-lg transition-all duration-200"
+                  className="mt-1 block w-full font-poppins rounded-xl border-gray-500 bg-gray-200 shadow-sm focus:border-green-400 focus:ring-green-400 p-4 text-lg transition-all duration-200"
                   placeholder="Share your thoughts with the community..."
                   required
                 />
               </div>
 
               <div className="space-y-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Add Visual Content</label>
-                
-                <div className="border-3 border-dashed border-gray-200 rounded-xl p-8 bg-gray-50 hover:bg-gray-100 transition-all duration-200">
+                <label className="block text-sm font-poppins font-semibold text-gray-700 mb-2">
+                  Add Visual Content
+                </label>
+
+                <div className="border-3 border-dashed border-gray-500 rounded-xl p-8 bg-gray-200 hover:bg-gray-100 transition-all duration-200">
                   <input
                     type="file"
                     accept="image/*"
@@ -108,12 +119,12 @@ const PostCard = () => {
                     className="hidden"
                     id="image-upload"
                   />
-                  <label 
-                    htmlFor="image-upload" 
+                  <label
+                    htmlFor="image-upload"
                     className="cursor-pointer flex flex-col items-center gap-3 text-green-600 hover:text-green-500 transition-colors"
                   >
                     <FaImage className="w-8 h-8" />
-                    <span className="font-medium">Upload an image</span>
+                    <span className="font-medium font-poppins">Upload an image</span>
                   </label>
                 </div>
 
@@ -122,7 +133,9 @@ const PostCard = () => {
                     <div className="w-full border-t border-gray-200"></div>
                   </div>
                   <div className="relative flex justify-center">
-                    <span className="px-4 bg-white text-sm text-gray-500 font-medium">OR</span>
+                    <span className="px-4 bg-white text-sm text-gray-500 font-medium">
+                      OR
+                    </span>
                   </div>
                 </div>
 
@@ -131,14 +144,14 @@ const PostCard = () => {
                   placeholder="Paste an image URL here"
                   value={imageUrl}
                   onChange={handleUrlChange}
-                  className="block w-full rounded-xl border-gray-200 shadow-sm focus:border-green-400 focus:ring-green-400 p-4 transition-all duration-200"
+                  className="block w-full rounded-xl border-gray-500 bg-gray-200 shadow-sm focus:border-green-400 focus:ring-green-400 p-4 transition-all duration-200"
                 />
 
                 {preview && (
                   <div className="mt-6 rounded-xl overflow-hidden shadow-lg transition-all duration-200 hover:shadow-xl">
-                    <img 
-                      src={preview} 
-                      alt="Preview" 
+                    <img
+                      src={preview}
+                      alt="Preview"
                       className="w-full object-cover max-h-96"
                     />
                   </div>
@@ -147,7 +160,7 @@ const PostCard = () => {
 
               <button
                 type="submit"
-                className="w-full bg-green-500 text-white px-8 py-4 rounded-xl hover:bg-green-600 transition-all duration-200 transform hover:scale-[1.02] font-bold text-lg shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                className="w-full bg-green-700 font-poppins text-white px-8 py-4 rounded-xl hover:bg-green-600 transition-all duration-200 transform hover:scale-[1.02] font-bold text-lg shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
               >
                 <span>Share Your Post</span>
                 <FaShare className="w-5 h-5" />
