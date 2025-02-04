@@ -1,9 +1,12 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom'
 import { FaSearch } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-white p-4 flex items-center justify-between w-full">
       <header className="bg-white p-4 w-full">
@@ -54,7 +57,9 @@ const Navbar = () => {
             </button>
           </div>
 
-          <button className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-colors flex items-center">
+          <button
+          onClick = {() => navigate('/post/new')}
+           className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-colors flex items-center">
             <FaPlus className="mr-2" />
             Post
           </button>
