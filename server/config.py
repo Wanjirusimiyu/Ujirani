@@ -51,11 +51,16 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
+# Determine the path to the .env file (assumed to be in the same directory as config.py)
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
-load_dotenv()
 
 class Config:
-    JWT_SECRET_KEY = os.getenv('SECRET_KEY')
+      # Load the secret key from the environment or set a fallback value
+    SECRET_KEY = os.getenv('SECRET_KEY')
+     # Use the SECRET_KEY as your JWT secret key
+    JWT_SECRET_KEY = SECRET_KEY
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     JWT_TOKEN_LOCATION = ["cookies"]
