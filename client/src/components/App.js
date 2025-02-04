@@ -4,6 +4,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import SignUp from "../pages/SignUp";
 import Login from "../pages/Login";
 import Home from "../pages/Home";
+import PostCard from "../pages/PostCard";
 
 function App() {
   return (
@@ -16,7 +17,11 @@ function App() {
         {/* Define the SignUp route */}
         <Route path="/signup" element={<SignUp />} />
 
+        {/* Define the Home route */}
         <Route path="/" element={<Home />} />
+
+       {/* Define the PostCard route */}
+        <Route path="/post/new" element={<PostCard />} />
 
       </Routes>
     </Router>
