@@ -87,7 +87,7 @@ const PostCard = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="mt-1 block font-poppins w-full rounded-xl border-gray-500 bg-gray-200 shadow-lg focus:border-green-400 focus:ring-green-400 p-4 text-lg transition-all duration-200"
-                  placeholder="Give your post a catchy title"
+                  placeholder="Give your post a title..."
                   required
                 />
               </div>
