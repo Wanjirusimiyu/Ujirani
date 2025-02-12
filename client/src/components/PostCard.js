@@ -36,4 +36,3 @@ const PostCard = ({ location, time, content, images, likes, comments, shares }) 
 };
 
 export default PostCard;
-
