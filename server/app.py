@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from flask_jwt_extended import (
     JWTManager, create_access_token, create_refresh_token, 
     set_access_cookies, set_refresh_cookies, jwt_required,
@@ -9,12 +9,16 @@ from google.auth.transport import requests as google_requests
 import requests 
 import secrets
 import string
+import cloudinary
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
+from flask_login import LoginManager, current_user
 from werkzeug.security import check_password_hash
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from config import Config  
-from models import db, User  
+from models import db, User, Post
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -38,10 +42,18 @@ db.init_app(app)
 bcrypt = Bcrypt(app)
 migrate = Migrate(app, db)
 
+# Initialize login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 
 def generate_secure_password():
     alphabet = string.ascii_letters + string.digits + string.punctuation
     return ''.join(secrets.choice(alphabet) for _ in range(20))
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # Define routes
 @app.route('/')
@@ -104,25 +116,30 @@ def login():
             access_token = create_access_token(identity=user.id)
             refresh_token = create_refresh_token(identity=user.id)
             
-            response = jsonify({
-            "message": "Login successful",
-            "user": {
-                "id": user.id,
-                "email": user.email,
-                "fullname": user.fullname
-            }
-        })
+            # Set session
+            session['user_id'] = user.id
             
+            response = jsonify({
+                "message": "Login successful",
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "fullname": user.fullname
+                }
+            })
+            
+            # Set JWT cookies
             set_access_cookies(response, access_token)
             set_refresh_cookies(response, refresh_token)
+            
             return response, 200
-          
+            
         return jsonify({"message": "Invalid email or password"}), 401
-
 
     except Exception as e:
         print(f"Error during login: {e}")
         return jsonify({'message': 'An error occurred'}), 500
+
 
 @app.route("/api/protected")
 @jwt_required()
@@ -195,43 +212,107 @@ def logout():
 @app.route('/auth/google', methods=['POST'])
 def google_auth():
     try:
-        data = request.get_json()
-        token = data.get('credential')
+        token_data = request.get_json()
+        google_token = token_data.get('token')
         
-        google_response = requests.get(
+        userinfo_response = requests.get(
             'https://www.googleapis.com/oauth2/v3/userinfo',
-            headers={'Authorization': f'Bearer {token}'}
+            headers={'Authorization': f'Bearer {google_token}'}
         )
-        google_data = google_response.json()
         
-        email = google_data.get('email')
-        fullname = google_data.get('name')
+        if not userinfo_response.ok:
+            return jsonify({'error': 'Failed to get user info'}), 400
+            
+        userinfo = userinfo_response.json()
         
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=userinfo['email']).first()
         
         if not user:
-            secure_password = generate_secure_password()
+            # Create new user without password for Google auth
             user = User(
-                fullname=fullname,
-                email=email,
-                password=secure_password,
-                is_verified=True  # Auto-verify Google users
+                email=userinfo['email'],
+                fullname=userinfo['name'],
+                is_verified=True
             )
             db.session.add(user)
             db.session.commit()
         
+        access_token = create_access_token(identity=user.id)
+        
         return jsonify({
-            'token': create_access_token(identity=user.id),
+            'token': access_token,
             'user': {
                 'id': user.id,
                 'email': user.email,
-                'fullname': user.fullname,
-                'is_verified': user.is_verified
+                'fullname': user.fullname
             }
         }), 200
         
     except Exception as e:
-        return jsonify({'message': str(e)}), 400
+        print(f"Google auth error: {str(e)}")
+        return jsonify({'error': 'Authentication failed'}), 400
+
+
+
+@app.route('/posts', methods=['POST'])
+def create_post():
+    try:
+        title = request.form.get('title')
+        content = request.form.get('content')
+        user_id = request.form.get('user_id')
+        
+        # Handle image upload
+        image_url = None
+        if 'image' in request.files:
+            image = request.files['image']
+            if image:
+                upload_result = cloudinary.uploader.upload(image)
+                image_url = upload_result.get('secure_url')
+        
+        new_post = Post(
+            title=title,
+            content=content,
+            image_url=image_url,
+            user_id=user_id
+        )
+        
+        db.session.add(new_post)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Post created successfully',
+            'post': {
+                'id': new_post.id,
+                'title': new_post.title,
+                'content': new_post.content,
+                'image_url': new_post.image_url,
+                'user_id': new_post.user_id
+            }
+        }), 201
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
+@app.route('/check_session')
+@jwt_required()
+def check_session():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    
+    if user:
+        return jsonify({
+            'id': user.id,
+            'email': user.email,
+            'fullname': user.fullname
+        }), 200
+    
+    return jsonify({'error': 'User not found'}), 404
+
+
+
+
+
 # Run the application
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
