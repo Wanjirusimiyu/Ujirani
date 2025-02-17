@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { FaImage, FaShare } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 const NewPost = () => {
   const [title, setTitle] = useState("");
@@ -8,6 +9,26 @@ const NewPost = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const checkSession = async () => {
+    const response = await fetch('http://localhost:5555/check_session', {
+      credentials: 'include',  // Important for cookies
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+    throw new Error('Unauthorized');
+  };
+  
+  
 
   useEffect(() => {
     if (selectedFile) {
@@ -33,11 +54,15 @@ const NewPost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
 
+    const token = localStorage.getItem('token');
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
-
     if (selectedFile) {
       formData.append("image", selectedFile);
     } else if (imageUrl) {
@@ -45,16 +70,15 @@ const NewPost = () => {
     }
 
     try {
-      const response = await fetch("/api/posts", {
+      const response = await fetch("http://localhost:5555/posts", {
         method: "POST",
-        body: formData,
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
       });
       if (response.ok) {
-        setTitle("");
-        setContent("");
-        setImageUrl("");
-        setSelectedFile(null);
-        setPreview("");
+        navigate('/');
       }
     } catch (error) {
       console.error("Error creating post:", error);
