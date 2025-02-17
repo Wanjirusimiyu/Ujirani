@@ -70,26 +70,23 @@ const Login = () => {
 
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
-      const response = await fetch('http://127.0.0.1:5555/auth/google', {
+      const response = await fetch('http://localhost:5555/auth/google', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ credential: tokenResponse.access_token })
+        body: JSON.stringify({ token: tokenResponse.access_token })
       });
-      
+  
       const data = await response.json();
-      if (response.ok) {
-        setMessage("Login successful!");
-        setTimeout(() => {
-          navigate('/', { state: { user: data.user } });
-        }, 1500);
-      }
+      // Store the JWT token received from your backend
+      localStorage.setItem('token', data.token);
+      navigate('/');
     } catch (error) {
-      setMessage("Google login failed. Please try again.");
-      console.error('Google auth error:', error);
+      console.error('Authentication failed:', error);
     }
   };
+  
 
   const googleLogin = useGoogleLogin({
     onSuccess: handleGoogleSuccess,
