@@ -51,6 +51,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
+import cloudinary
 # Determine the path to the .env file (assumed to be in the same directory as config.py)
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -61,7 +62,7 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY')
      # Use the SECRET_KEY as your JWT secret key
     JWT_SECRET_KEY = SECRET_KEY
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=6)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     JWT_TOKEN_LOCATION = ["cookies"]
     JWT_COOKIE_SECURE = False # Set to True when in production /deployment
@@ -69,6 +70,14 @@ class Config:
     # Specify the database file inside the instance folder
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(basedir, 'instance', 'database.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME') 
+    CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
+    CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
+    CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
+    secure = True
+
+          
+
 
 
 
