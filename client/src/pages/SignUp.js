@@ -89,29 +89,31 @@ const SignUp = () => {
 
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
+      // Get the actual token from the response
       const response = await fetch('http://127.0.0.1:5555/auth/google', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ credential: tokenResponse.access_token })
+        body: JSON.stringify({ token: tokenResponse.access_token })
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to authenticate');
+      }
       
       const data = await response.json();
       
-      if (response.ok) {
-        setSuccessMessage("Account created successfully! Redirecting...");
-        setTimeout(() => {
-          navigate('/', { state: { user: data.user } });
-        }, 1500);
-      } else {
-        setErrorMessage(data.message || "Failed to create account with Google");
-      }
+      setSuccessMessage("Account created successfully! Redirecting...");
+      setTimeout(() => {
+        navigate('/', { state: { user: data.user } });
+      }, 1500);
     } catch (error) {
-      setErrorMessage("Failed to connect with Google. Please try again.");
       console.error('Google auth error:', error);
+      setErrorMessage("Failed to connect with Google. Please try again.");
     }
-  };
+};
 
   const googleLogin = useGoogleLogin({
     onSuccess: handleGoogleSuccess,
@@ -230,6 +232,7 @@ const SignUp = () => {
             <button
               type="submit"
               className="w-full bg-green-600 text-white py-2.5 rounded-2xl font-bold hover:bg-green-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-2"
+
             >
               SIGN UP
             </button>
